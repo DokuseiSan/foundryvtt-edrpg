@@ -1,4 +1,7 @@
+edrpg/i18n/
+node_modules/
+scratch/
+
 *.code-workspace
 edrpg/edrpg.css*
-node_modules/
 secrets.json

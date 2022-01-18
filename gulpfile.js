@@ -2,6 +2,7 @@ const gulp = require("gulp");
 
 // const css = require("./utils/css.js");
 const linting = require("./utils/lint.js");
+const compileLangs = require("./utils/langs.js");
 // const packs = require("./utils/packs.js");
 
 
@@ -14,6 +15,7 @@ const linting = require("./utils/lint.js");
 // exports.compilePacks = gulp.series(packs.compile);
 // exports.extractPacks = gulp.series(packs.extract);
 exports.lint = gulp.series(linting.lint);
+exports.langs = gulp.series(compileLangs.langs)
 // exports.buildAll = gulp.parallel(
 //   css.compile,
 //   packs.compile
