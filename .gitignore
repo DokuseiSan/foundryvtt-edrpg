@@ -1,0 +1,4 @@
+*.code-workspace
+edrpg/edrpg.css*
+node_modules/
+secrets.json
