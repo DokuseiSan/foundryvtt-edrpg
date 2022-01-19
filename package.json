@@ -1,27 +1,23 @@
 {
   "scripts": {
+    "css": "gulp buildStyles",
     "gulp": "gulp",
-    "langs": "gulp langs",
-    "lint:fix": "gulp lint --fix",
-    "lint": "gulp lint",
-    "sass:watch": "sass --watch scss:edrpg/css",
-    "sass": "sass scss:edrpg/css"
+    "langs": "gulp buildLangs",
+    "lint:fix": "gulp lintJavascript --fix",
+    "lint": "gulp lintJavascript"
   },
   "devDependencies": {
-    "@babel/core": "^7.16.7",
-    "@babel/eslint-parser": "^7.16.5",
-    "@babel/eslint-plugin": "^7.16.5",
-    "babel-eslint": "^10.1.0",
-    "eslint-plugin-jsdoc": "^32.3.0",
     "fs": "^0.0.1-security",
     "gulp": "^4.0.2",
-    "gulp-eslint7": "^0.3.1",
+    "gulp-eslint-new": "^1.1.2",
     "gulp-if": "^3.0.0",
     "gulp-less": "^5.0.0",
+    "gulp-sass": "^5.1.0",
     "gulp-yaml": "^2.0.4",
     "js-yaml": "^4.1.0",
     "merge-stream": "^2.0.0",
     "path": "^0.12.7",
+    "sass": "^1.49.0",
     "through2": "^2.0.5",
     "yargs": "^7.1.2"
   },

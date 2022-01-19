@@ -1,15 +1,24 @@
-const eslint      = require("gulp-eslint7");
+"use strict";
+
+const eslint      = require("gulp-eslint-new");
 const gulp        = require("gulp");
 const gulpIf      = require("gulp-if");
 const mergeStream = require("merge-stream");
 const yaml        = require('gulp-yaml');
+const sass = require('gulp-sass')(require('sass'));
 
 const parsedArgs  = require("yargs").argv;
 
 const LINTER_PATHS    = ["./edrpg/edrpg.js", "./edrpg/module/"];
 const YAML_LANG_PATHS = ["yaml/i18n/*.yaml"];
 
-function linterTask() {
+function buildStyles() {
+	return gulp.src("./scss/**/*.scss")
+		.pipe(sass.sync().on("error", sass.logError))
+		.pipe(gulp.dest("./edrpg/css"));
+}
+
+function lintJavascript() {
 	const applyFixes = !!parsedArgs.fix;
 
 	const tasks = LINTER_PATHS.map(path => {
@@ -31,19 +40,24 @@ function linterTask() {
 	return mergeStream.call(null, tasks);
 }
 
-function yamlLangTask() {
+function buildLangs() {
   return gulp.src(YAML_LANG_PATHS)
     .pipe(yaml({ space: 2 }))
     .pipe(gulp.dest("./edrpg/i18n"))
 }
 
-const defaultTask = gulp.series(
-	linterTask,
-	yamlLangTask,
-
+const defaultTask = gulp.parallel(
+	lintJavascript,
+	buildStyles,
+	buildLangs,
 );
 
 exports.default = defaultTask;
 
-exports.lint = gulp.series(linterTask);
-exports.langs = gulp.series(yamlLangTask)
+exports.lintJavascript = lintJavascript;
+exports.buildLangs = buildLangs;
+exports.buildStyles = buildStyles;
+
+exports.watch = function () {
+  gulp.watch('./scss/**/*.scss', buildStyles);
+};
