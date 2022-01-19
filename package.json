@@ -1,11 +1,11 @@
 {
   "scripts": {
-    "css:watch": "sass --watch style/edrpg.scss edrpg/edrpg.css",
-    "css": "sass style/edrpg.scss edrpg/edrpg.css",
     "gulp": "gulp",
     "langs": "gulp langs",
     "lint:fix": "gulp lint --fix",
-    "lint": "gulp lint"
+    "lint": "gulp lint",
+    "sass:watch": "sass --watch scss:edrpg/css",
+    "sass": "sass scss:edrpg/css"
   },
   "devDependencies": {
     "@babel/core": "^7.16.7",

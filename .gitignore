@@ -1,8 +1,9 @@
+
 .sass-cache/
+edrpg/css/
 edrpg/i18n/
 node_modules/
 scratch/
 
 *.code-workspace
-edrpg/edrpg.css*
 secrets.json

@@ -13,7 +13,7 @@
 	],
 	"scripts": [],
 	"esmodules": ["edrpg.js"],
-	"styles": ["edrpg.css"],
+	"styles": ["css/edrpg.css"],
 	"packs": [],
 	"languages": [
 		{
