@@ -1,5 +1,5 @@
-"use strict";
-
+const args   = require("yargs").argv;
+const del    = require("del");
 const eslint = require("gulp-eslint-new");
 const gulp   = require("gulp");
 const gulpIf = require("gulp-if");
@@ -7,34 +7,52 @@ const sass   = require("gulp-sass")(require("sass"));
 const yaml   = require("gulp-yaml");
 
 const mergeStream = require("merge-stream");
-const parsedArgs  = require("yargs").argv;
 
-const LINT_PATHS = ["./edrpg/edrpg.js", "./edrpg/module/"];
-const LANG_PATHS = ["yaml/i18n/*.yaml"];
+const DST_CSS_PATHS  = ["./edrpg/css"];
+const DST_LANG_PATHS = ["./edrpg/i18n"];
+
+const SRC_LANG_PATHS = ["i18n/*.yaml"];
+const SRC_LINT_PATHS = ["./edrpg/edrpg.js", "./edrpg/module/"];
+const SRC_SCSS_PATHS = ["./scss/**/*.scss"];
+
+const ALL_DST_PATHS = [DST_CSS_PATHS, DST_LANG_PATHS];
+const ALL_SRC_PATHS = [...SRC_LANG_PATHS, ...SRC_LINT_PATHS, ...SRC_SCSS_PATHS];
+
+// builds everything
+//
+const build = gulp.series(langs, linter, scss);
+
+// clean up all generated files
+//
+function clean() {
+	return del(ALL_DST_PATHS);
+}
 
 // transform all the i18n language YAML files into JSON within the main system
 // directory
 //
-function buildLangs(cb) {
-	gulp.src(LANG_PATHS)
-		.pipe(yaml({ space: 2 }))
-		.pipe(gulp.dest("./edrpg/i18n"));
+function langs() {
+	const emptyYamlMatch = /YAML loader cannot load empty content/;
 
-	cb();
+	const taskStream = gulp.src(SRC_LANG_PATHS)
+		.pipe(yaml({ space: 2 })
+			.on("error", e => {
+				if (!emptyYamlMatch.exec(e.message)) {
+					taskStream.emit("error", e);
+				}
+			})
+		)
+		.pipe(gulp.dest(DST_LANG_PATHS));
+
+	return taskStream;
 }
 
-function buildStyles(cb) {
-	gulp.src("./scss/**/*.scss")
-		.pipe(sass.sync().on("error", sass.logError))
-		.pipe(gulp.dest("./edrpg/css"));
+// Check for formatting/syntactical errors in the system source code
+//
+function linter() {
+	const applyFixes = !!args.fix;
 
-	cb();
-}
-
-function lintJavascript(cb) {
-	const applyFixes = !!parsedArgs.fix;
-
-	const tasks = LINT_PATHS.map(path => {
+	const tasks = SRC_LINT_PATHS.map(path => {
 		const src = path.endsWith("/")
 			? `${path}**/*.js`
 			: path;
@@ -50,23 +68,26 @@ function lintJavascript(cb) {
 			.pipe(gulpIf(file => file.eslint != null && file.eslint.fixed, gulp.dest(dest)));
 	});
 
-	mergeStream(tasks);
-
-	cb();
+	return mergeStream(tasks);
 }
 
-const defaultTask = gulp.parallel(
-	lintJavascript,
-	buildStyles,
-	buildLangs,
-);
+// compile the SCSS into CSS within the main system directory
+//
+function scss() {
+	return gulp.src(SRC_SCSS_PATHS)
+		.pipe(sass.sync().on("error", sass.logError))
+		.pipe(gulp.dest(DST_CSS_PATHS));
+}
 
-exports.default = defaultTask;
+// builds and then watches everything and rebuilds on changes
+//
+function watch() {
+	return gulp.watch(ALL_SRC_PATHS, {ignoreInitial: false},
+		gulp.series(langs, linter, scss)
+	);
+}
 
-exports.buildLangs     = buildLangs;
-exports.buildStyles    = buildStyles;
-exports.lintJavascript = lintJavascript;
-
-exports.watch = function() {
-	gulp.watch("./scss/**/*.scss", buildStyles);
-};
+exports.build   = build;
+exports.clean   = clean;
+exports.default = build;
+exports.watch   = watch;

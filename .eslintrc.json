@@ -13,7 +13,14 @@
 		"array-bracket-spacing": ["warn", "never"],
 		"array-callback-return": "warn",
 		"arrow-spacing": "warn",
-		"comma-dangle": ["warn", "always-multiline"],
+		"brace-style": ["error", "stroustrup"],
+		"comma-dangle": ["warn", {
+			"arrays": "always-multiline",
+			"objects": "always-multiline",
+			"imports": "always-multiline",
+			"exports": "always-multiline",
+			"functions": "never"
+		}],
 		"comma-style": "warn",
 		"computed-property-spacing": "warn",
 		"constructor-super": "error",
