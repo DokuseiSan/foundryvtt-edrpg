@@ -89,5 +89,8 @@ function watch() {
 
 exports.build   = build;
 exports.clean   = clean;
+exports.css     = gulp.series(scss);
 exports.default = build;
+exports.lang    = gulp.series(langs);
+exports.lint    = gulp.series(linter);
 exports.watch   = watch;
