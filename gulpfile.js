@@ -15,20 +15,20 @@ const SRC_LANG_PATHS = ["i18n/*.yaml"];
 const SRC_LINT_PATHS = ["./edrpg/edrpg.js", "./edrpg/module/"];
 const SRC_SCSS_PATHS = ["./scss/**/*.scss"];
 
-const ALL_DST_PATHS = [DST_CSS_PATHS, DST_LANG_PATHS];
+const ALL_DST_PATHS = [...DST_CSS_PATHS, ...DST_LANG_PATHS];
 const ALL_SRC_PATHS = [...SRC_LANG_PATHS, ...SRC_LINT_PATHS, ...SRC_SCSS_PATHS];
 
-// builds everything
+// Builds everything
 //
 const build = gulp.series(langs, linter, scss);
 
-// clean up all generated files
+// Clean up all generated files
 //
 function clean() {
 	return del(ALL_DST_PATHS);
 }
 
-// transform all the i18n language YAML files into JSON within the main system
+// Transform all the i18n language YAML files into JSON within the main system
 // directory
 //
 function langs() {
@@ -71,7 +71,7 @@ function linter() {
 	return mergeStream(tasks);
 }
 
-// compile the SCSS into CSS within the main system directory
+// Compile the SCSS into CSS within the main system directory
 //
 function scss() {
 	return gulp.src(SRC_SCSS_PATHS)
@@ -79,7 +79,7 @@ function scss() {
 		.pipe(gulp.dest(DST_CSS_PATHS));
 }
 
-// builds and then watches everything and rebuilds on changes
+// Builds and then watches everything and rebuilds on file changes / additions
 //
 function watch() {
 	return gulp.watch(ALL_SRC_PATHS, {ignoreInitial: false},
